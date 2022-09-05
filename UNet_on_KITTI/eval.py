@@ -1,3 +1,9 @@
+from UNet_on_KITTI.dice_loss import dice_loss
+
+
+from UNet_on_KITTI.dice_loss import dice_loss
+import torch
+
 def eval_loop(model, optimizer, eval_l):  #evaluate the test set
     running_loss = 0
     model.eval()
@@ -9,15 +15,13 @@ def eval_loop(model, optimizer, eval_l):  #evaluate the test set
             masks = masks.to(device)
             # forward
             out = model(imgs)
-            loss = DiceLoss(out, masks)
+            loss = dice_loss(out, masks)
             running_loss += loss.item()*imgs.shape[0]
             # calculate predictions using output
             predicted = (out > 0.5).float()  
             predicted = predicted.view(-1).cpu().numpy()   #turn tensor to array for accuracy
-            print(predicted)
             masks = (masks > 0.5).float()  
             labels = masks.view(-1).cpu().numpy()
-            print(labels)
             accuracy.append(accuracy_score(labels, predicted))
             f1_scores.append(f1_score(labels, predicted))
     acc = sum(accuracy)/len(accuracy)
