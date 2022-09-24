@@ -2,7 +2,7 @@ import torch
 from UNet_on_KITTI.attention import Attention
 
 "construct Double Convolution block for UNet"
-class DoubleConv(nn.Module):
+class DoubleConv(torch.nn.Module):
     def __init__(self, in_ch, out_ch, kernel):
         super(DoubleConv, self).__init__()
         self.conv = nn.Sequential( 
@@ -18,7 +18,7 @@ class DoubleConv(nn.Module):
         return x
 
 "Down Sampling"
-class Down(nn.Module):
+class Down(torch.nn.Module):
     def __init__(self, in_ch, out_ch, kernel):
         super().__init__()
         self.down = nn.Sequential(nn.MaxPool2d(2,2),
@@ -29,7 +29,7 @@ class Down(nn.Module):
         return x
 
 "Up sampling"   
-class Up(nn.Module):
+class Up(torch.nn.Module):
     def __init__(self, in_ch, out_ch):
         super().__init__()
         self.up = nn.ConvTranspose2d(in_ch //2, in_ch //2, kernel_size = 2, stride = 2)
@@ -43,7 +43,7 @@ class Up(nn.Module):
         return up_x
 
 "output layer with binary feature maps"
-class out_layer(nn.Module):
+class out_layer(torch.nn.Module):
     def __init__(self, in_ch, num_class):
         super().__init__()
         self.conv = nn.Conv2d(in_ch, num_class, 1) #final layer by 1x1 conv
@@ -55,7 +55,7 @@ class out_layer(nn.Module):
         return x  
 
 "construct Unet"
-class UNet(nn.Module):
+class UNet(torch.nn.Module):
     def __init__(self, in_channels, num_classes):
         super(UNet, self).__init__()
         self.inc = DoubleConv(in_channels, 64, 3)

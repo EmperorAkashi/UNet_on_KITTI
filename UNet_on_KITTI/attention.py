@@ -1,7 +1,9 @@
+import torch
+
 def hw_flattern(x):
     return x.view(x.size()[0],x.size()[1],-1)
 
-class Attention(nn.Module):
+class Attention(torch.nn.Module):
     def __init__(self, c):
         super(Attention,self).__init__()
         self.conv1 = nn.Conv2d(c, c//8, kernel_size=1, stride=1, bias=False)
