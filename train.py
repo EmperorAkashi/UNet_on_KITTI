@@ -27,7 +27,7 @@ def train(args):
     
 
 parser = argparse.ArgumentParser(description="segmentation training")
-parser.add_argument('model', default = UNet)
+parser.add_argument('--model', default = UNet)
 parser.add_argument('--train_dir', default = '../input/sartorius-cell-instance-segmentation', help = 'train image directory')
 parser.add_argument('--num_classes', default = 1)
 parser.add_argument('--num_epoch', default = 10)
