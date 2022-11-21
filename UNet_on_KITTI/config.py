@@ -31,9 +31,9 @@ class unet_config:
 
 @dataclasses.dataclass
 class unet_train_config:
+    model_config: omegaconf.MISSING
     data: unet_data_config = unet_data_config()
     optim: optim_config = optim_config()
-    model_config: omegaconf.MISSING
     batch_size: int = 64
     num_epochs: int = 10
 
