@@ -7,6 +7,7 @@ import dataclasses
 import config as cf
 from model import UNet
 from dice_loss import dice_loss
+from dataset import kitti_dataset
 
 class unet_trainer(pl.lightning_module):
     hparams: cf.unet_train_config #constant intitialized for each instance
@@ -30,7 +31,21 @@ class unet_trainer(pl.lightning_module):
         optim = torch.optim.AdamW(self.unet.parameters(), lr=self.hparams.optim.learning_rate)
         return optim
 
-    @hydra.main(config_path=None, config_name='config')
+
+class unet_data_module(pl.LightningDataModule):
+    def __init__(self, config: cf.unet_data_config, batch_size) -> None:
+        super().__init__()
+        self.config = config
+        self.ds = kitti_dataset(config.image_path, config.segment_path)
+        self.batch_size = batch_size
+
+    def setup(self, stage: str) -> None:
+        return super().setup(stage)
+
+    def train_dataloader(self):
+        return torch.utils.data.Dataloader(self.ds, self.batch_size, shuffle=True)
+
+@hydra.main(config_path=None, config_name='config')
     def train(config: cf.unet_train_config):
         trainer = pl.Trainer(
             accelerator='gpu',
@@ -40,6 +55,7 @@ class unet_trainer(pl.lightning_module):
         model = unet_trainer(config)
 
         trainer.fit(model, datamodule=dm)
+        
 
         
 
