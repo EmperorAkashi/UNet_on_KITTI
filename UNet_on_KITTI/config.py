@@ -1,6 +1,7 @@
 import dataclasses
 from typing import Optional 
 import omegaconf
+import pandas as pd
 
 from UNet_on_KITTI.model import UNet
 
@@ -13,6 +14,7 @@ class unet_data_config:
     segment_path(str): path of semantic image
     train_prop(float): percentage for training
     """
+    dataframe: omegaconf.MISSING
     image_path: str = "./Kitti/training"
     segment_path: str = "./Kitti/semantic_rgb"
     train_prop: float = 0.9

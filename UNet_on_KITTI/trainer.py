@@ -40,23 +40,34 @@ class unet_data_module(pl.LightningDataModule):
         self.batch_size = batch_size
 
     def setup(self, stage: str) -> None:
+        all_img = np.array(self.config.dataframe.id.unique())  #create an array for all image id
+        np.random.seed(42)
+        idx_shuf = np.random.permutation(len(all_img))  #shuffle the dataset
+        num_train = int(len(all_img)*self.config.train_prop) #percent of training set
+        if stage == train:
+            self.img_sf = all_img[idx_shuf[:num_train]]
+        else:
+            self.img_sf = all_img[idx_shuf[num_train:]]
+            
         return super().setup(stage)
 
     def train_dataloader(self):
         return torch.utils.data.Dataloader(self.ds, self.batch_size, shuffle=True)
 
 @hydra.main(config_path=None, config_name='config')
-    def train(config: cf.unet_train_config):
-        trainer = pl.Trainer(
-            accelerator='gpu',
-            devices=1)
+def main(config: cf.unet_train_config, dm: pl.LightningDataModule):
+    trainer = pl.Trainer(
+        accelerator='gpu',
+        devices=1)
+    data_config = config.data
+    dm = unet_data_module(data_config, config.batch_size)
+    model = unet_trainer(config)
 
-        #need data module for kitti: dm = 
-        model = unet_trainer(config)
+    trainer.fit(model,dm)
+          
 
-        trainer.fit(model, datamodule=dm)
-        
-
-        
-
-        
+if __name__ == '__main__':
+    from hydra.core.config_store import ConfigStore
+    cs = ConfigStore()
+    cs.store('train_base', node=cf.unet_train_config)
+    main()
