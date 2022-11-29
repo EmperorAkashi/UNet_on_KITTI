@@ -44,7 +44,7 @@ class unet_data_module(pl.LightningDataModule):
         np.random.seed(42)
         idx_shuf = np.random.permutation(len(all_img))  #shuffle the dataset
         num_train = int(len(all_img)*self.config.train_prop) #percent of training set
-        if stage == train:
+        if stage == 'train':
             self.img_sf = all_img[idx_shuf[:num_train]]
         else:
             self.img_sf = all_img[idx_shuf[num_train:]]
