@@ -10,7 +10,7 @@ class kitti_dataset(Dataset):
         self.transform = transform
         self.img_dir = image_dir
         self.seg_dir = segment_dir
-        self.df = dataframe
+        self.df = dataframe #need check the def of dataframe of kitti
 
     def __len__(self):
         return len(self.df)

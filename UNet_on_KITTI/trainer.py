@@ -1,6 +1,7 @@
 import numpy as np
 import hydra
 import torch
+import torch.utils.data
 import pytorch_lightning as pl
 import logging
 import dataclasses
@@ -24,6 +25,7 @@ class unet_trainer(pl.lightning_module):
         image, mask = batch
         predict = self(image) #self call forward by default
         loss = dice_loss(predict, mask)
+        return loss
         
     #need validation step
 
@@ -38,21 +40,30 @@ class unet_data_module(pl.LightningDataModule):
         self.config = config
         self.ds = kitti_dataset(config.image_path, config.segment_path)
         self.batch_size = batch_size
+        self.transform = None #place holder, need an appropriate data aug module
+        self.ds_train = None
+        self.ds_val = None
 
     def setup(self, stage: str) -> None:
-        all_img = np.array(self.config.dataframe.id.unique())  #create an array for all image id
-        np.random.seed(42)
-        idx_shuf = np.random.permutation(len(all_img))  #shuffle the dataset
-        num_train = int(len(all_img)*self.config.train_prop) #percent of training set
-        if stage == 'train':
-            self.img_sf = all_img[idx_shuf[:num_train]]
-        else:
-            self.img_sf = all_img[idx_shuf[num_train:]]
-            
-        return super().setup(stage)
+        # Define steps that should be done on 
+        # every GPU, like splitting data, applying
+        # transform etc.
+        if self.config.limit is not None:
+            limit = min(self.config.limit, len(self.ds))
+            self.ds, _ = torch.utils.data.random_split(self.ds, [limit, len(self.ds) - limit])
+
+        num_train_samples = int(len(self.ds) * self.config.train_prop)
+
+        self.ds_train, self.ds_val = torch.utils.data.random_split(
+            self.ds, [num_train_samples, len(self.ds) - num_train_samples],
+            torch.Generator().manual_seed(42)
+        )
 
     def train_dataloader(self):
-        return torch.utils.data.Dataloader(self.ds, self.batch_size, shuffle=True)
+        return torch.utils.data.Dataloader(self.ds_train, self.batch_size, shuffle=True)
+
+    def val_dataloader(self):
+        return torch.utils.data.Dataloader(self.ds_val, self.batch_size, shuffle=False)
 
 @hydra.main(config_path=None, config_name='config')
 def main(config: cf.unet_train_config, dm: pl.LightningDataModule):

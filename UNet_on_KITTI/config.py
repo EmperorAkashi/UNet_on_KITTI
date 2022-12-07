@@ -18,6 +18,7 @@ class unet_data_config:
     image_path: str = "./Kitti/training"
     segment_path: str = "./Kitti/semantic_rgb"
     train_prop: float = 0.9
+    limit: Optional[int] = None
 
 @dataclasses.dataclass
 class optim_config:
