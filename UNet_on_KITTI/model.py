@@ -1,5 +1,7 @@
 import torch
 from UNet_on_KITTI.attention import Attention
+from file_utils import read_from_folder
+from typing import Optional
 
 "construct Double Convolution block for UNet"
 class DoubleConv(torch.nn.Module):
@@ -13,7 +15,7 @@ class DoubleConv(torch.nn.Module):
             nn.BatchNorm2d(out_ch),
             nn.ReLU(inplace=True)
          )
-    def forward(self, x):
+    def forward(self, x) -> torch.Tensor:
         x = self.conv(x)
         return x
 
@@ -24,7 +26,7 @@ class Down(torch.nn.Module):
         self.down = nn.Sequential(nn.MaxPool2d(2,2),
                                  DoubleConv(in_ch, out_ch, kernel))   #how Down class inherits DoubleConv?
         
-    def forward(self, x):
+    def forward(self, x) -> torch.Tensor:
         x = self.down(x)
         return x
 
@@ -35,7 +37,7 @@ class Up(torch.nn.Module):
         self.up = nn.ConvTranspose2d(in_ch //2, in_ch //2, kernel_size = 2, stride = 2)
         self.conv = DoubleConv(in_ch, out_ch, 3) 
         
-    def forward(self, feature, context):
+    def forward(self, feature, context) -> torch.Tensor:
         x = self.up(feature)
         
         skip = torch.cat([x, context], dim = 1)   #concatenate context&feature map
@@ -49,7 +51,7 @@ class out_layer(torch.nn.Module):
         self.conv = nn.Conv2d(in_ch, num_class, 1) #final layer by 1x1 conv
         self.sigmoid = nn.Sigmoid() #elementwise calculation of sigmoid, each layer (class)
         
-    def forward(self, x):
+    def forward(self, x) -> torch.Tensor:
         x = self.conv(x)
         x = self.sigmoid(x)
         return x  
@@ -73,7 +75,7 @@ class UNet(torch.nn.Module):
         self.up3 = Up(256, 64)
         self.up4 = Up(128, 64)
         self.outc = out_layer(64, num_classes)  #out layer w/ different classes, each channel w/ binary label
-    def forward(self, x):
+    def forward(self, x) -> torch.Tensor:
         x1 = self.inc(x)
         x1 = self.attn1(x1)
         x2 = self.down1(x1)

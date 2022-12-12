@@ -6,10 +6,9 @@ import cv2 as cv
 class kitti_dataset(Dataset):
     "Dataset to load semantic data from Kitti"
 
-    def __init__(self, image_dir, segment_dir, dataframe, transform = None):
+    def __init__(self, dir, transform = None):
         self.transform = transform
-        self.img_dir = image_dir
-        self.seg_dir = segment_dir
+        self.dir = image_dir
         self.df = dataframe #need check the def of dataframe of kitti
 
     def __len__(self):

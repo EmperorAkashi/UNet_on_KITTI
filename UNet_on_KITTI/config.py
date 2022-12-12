@@ -2,6 +2,7 @@ import dataclasses
 from typing import Optional 
 import omegaconf
 import pandas as pd
+from labels import labels, get_numclasses
 
 from UNet_on_KITTI.model import UNet
 
@@ -10,13 +11,11 @@ class unet_data_config:
     """configuration of data loading
 
     attr:
-    image_path(str): path of input image
-    segment_path(str): path of semantic image
+    file_path(str): path of input image and semantic labels, 
+                    files will be read separately by file utils
     train_prop(float): percentage for training
     """
-    dataframe: omegaconf.MISSING
-    image_path: str = "./Kitti/training"
-    segment_path: str = "./Kitti/semantic_rgb"
+    file_path: str = "./Kitti"
     train_prop: float = 0.9
     limit: Optional[int] = None
 
@@ -32,7 +31,7 @@ class optim_config:
 @dataclasses.dataclass
 class unet_config:
     in_channel: int = 3
-    num_classes: int = 3
+    num_classes: int = get_numclasses(labels)
 
 @dataclasses.dataclass
 class unet_train_config:

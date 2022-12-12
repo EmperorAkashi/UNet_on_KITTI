@@ -9,6 +9,8 @@ import config as cf
 from model import UNet
 from dice_loss import dice_loss
 from dataset import kitti_dataset
+from file_utils import read_from_folder
+
 
 class unet_trainer(pl.lightning_module):
     hparams: cf.unet_train_config #constant intitialized for each instance
@@ -38,7 +40,7 @@ class unet_data_module(pl.LightningDataModule):
     def __init__(self, config: cf.unet_data_config, batch_size) -> None:
         super().__init__()
         self.config = config
-        self.ds = kitti_dataset(config.image_path, config.segment_path)
+        self.ds = kitti_dataset(config.file_path)
         self.batch_size = batch_size
         self.transform = None #place holder, need an appropriate data aug module
         self.ds_train = None
