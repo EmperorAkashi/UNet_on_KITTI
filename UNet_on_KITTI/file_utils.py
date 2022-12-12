@@ -1,6 +1,7 @@
 import os
 import numpy as np
 from typing import Optional
+import collections
 
 def read_from_folder(path: str):
     """
@@ -19,8 +20,17 @@ def read_from_folder(path: str):
         :param path: path of the dataset/dataset split to use
         :return: a dictionary with all files for each key, sorted alphabetically by filename
         """
+        sub_folder = list_subdir(path) #path in dataconfig should be the top folder
+        semantic_dataframe = collections.defaultdict()
 
-def list_files_in_dir(curr_dir: str):
+        for f in sub_folder:
+            if f[0] == '.':
+                continue
+            semantic_dataframe[f] = list_files_in_dir(f)
+        return semantic_dataframe
+
+
+def list_subdir(curr_dir: str):
     """ method that lists all subdirectories of a given directory
         :param top_dir: directory in which the subdirectories are searched in
     """
