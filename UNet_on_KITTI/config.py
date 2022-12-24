@@ -1,10 +1,9 @@
 import dataclasses
 from typing import Optional 
 import omegaconf
-import pandas as pd
 from labels import labels, get_numclasses
 
-from UNet_on_KITTI.model import UNet
+from model import UNet
 
 @dataclasses.dataclass
 class unet_data_config:
@@ -15,7 +14,7 @@ class unet_data_config:
                     files will be read separately by file utils
     train_prop(float): percentage for training
     """
-    file_path: str = "./Kitti"
+    file_path: str = "/mnt/home/clin/ceph/dataset/kitti_semantic"
     train_prop: float = 0.9
     limit: Optional[int] = None
 
@@ -35,8 +34,9 @@ class unet_config:
 
 @dataclasses.dataclass
 class unet_train_config:
-    model_config: omegaconf.MISSING
     data: unet_data_config = unet_data_config()
+    unet_param: unet_config = unet_config()
+    model_config: UNet(unet_param.in_channel, unet_param.num_classes)
     optim: optim_config = optim_config()
     batch_size: int = 64
     num_epochs: int = 10

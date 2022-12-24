@@ -1,6 +1,7 @@
 import numpy as np
 import hydra
 import torch
+import torch.nn as nn
 import torch.utils.data
 import pytorch_lightning as pl
 import logging
@@ -12,7 +13,7 @@ from dataset import kitti_dataset
 from file_utils import read_from_folder
 
 
-class unet_trainer(pl.lightning_module):
+class unet_trainer(pl.LightningModule):
     hparams: cf.unet_train_config #constant intitialized for each instance
 
     def __init__(self, config: cf.unet_train_config):
@@ -67,7 +68,8 @@ class unet_data_module(pl.LightningDataModule):
     def val_dataloader(self):
         return torch.utils.data.Dataloader(self.ds_val, self.batch_size, shuffle=False)
 
-@hydra.main(config_path=None, config_name='config')
+#config_name should consistent with the one in cs.store()
+@hydra.main(config_path=None, config_name='train') 
 def main(config: cf.unet_train_config, dm: pl.LightningDataModule):
     trainer = pl.Trainer(
         accelerator='gpu',
@@ -82,5 +84,5 @@ def main(config: cf.unet_train_config, dm: pl.LightningDataModule):
 if __name__ == '__main__':
     from hydra.core.config_store import ConfigStore
     cs = ConfigStore()
-    cs.store('train_base', node=cf.unet_train_config)
+    cs.store('train', node=cf.unet_train_config)
     main()
