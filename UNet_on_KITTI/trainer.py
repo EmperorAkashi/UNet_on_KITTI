@@ -18,7 +18,7 @@ class unet_trainer(pl.LightningModule):
 
     def __init__(self, config: cf.unet_train_config):
         super().__init__()
-        self.save_hyperparameter(config)
+        self.save_hyperparameters(config)
         self.unet = UNet(config.model_config.in_channel, config.model_config.num_classes)
 
     def forward(self, x):
