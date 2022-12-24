@@ -1,4 +1,5 @@
 import torch
+from attention import Attention
 import torch.nn as nn
 from attention import Attention
 from file_utils import read_from_folder
