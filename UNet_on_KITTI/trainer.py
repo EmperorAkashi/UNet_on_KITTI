@@ -19,7 +19,7 @@ class unet_trainer(pl.LightningModule):
     def __init__(self, config: cf.unet_train_config):
         super().__init__()
         self.save_hyperparameter(config)
-        self.unet = UNet(config.unet_config.in_channel, config.unet_config.num_classes)
+        self.unet = UNet(config.model_config.in_channel, config.model_config.num_classes)
 
     def forward(self, x):
         return self.unet(x)
@@ -69,6 +69,7 @@ class unet_data_module(pl.LightningDataModule):
         return torch.utils.data.Dataloader(self.ds_val, self.batch_size, shuffle=False)
 
 #config_name should consistent with the one in cs.store()
+#config store turns dataclass into dataframes
 @hydra.main(config_path=None, config_name='train') 
 def main(config: cf.unet_train_config, dm: pl.LightningDataModule):
     trainer = pl.Trainer(

@@ -35,8 +35,7 @@ class unet_config:
 @dataclasses.dataclass
 class unet_train_config:
     data: unet_data_config = unet_data_config()
-    unet_param: unet_config = unet_config()
-    model_config: UNet(unet_param.in_channel, unet_param.num_classes)
+    model_config: unet_config = unet_config()
     optim: optim_config = optim_config()
     batch_size: int = 64
     num_epochs: int = 10
