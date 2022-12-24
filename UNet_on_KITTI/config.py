@@ -3,7 +3,7 @@ from typing import Optional
 import omegaconf
 from labels import labels#, get_numclasses
 
-from UNet_on_KITTI.model import UNet
+from model import UNet
 
 @dataclasses.dataclass
 class unet_data_config:
