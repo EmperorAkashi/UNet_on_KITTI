@@ -1,7 +1,6 @@
 import dataclasses
 from typing import Optional 
 import omegaconf
-import pandas as pd
 from labels import labels, get_numclasses
 
 from UNet_on_KITTI.model import UNet
