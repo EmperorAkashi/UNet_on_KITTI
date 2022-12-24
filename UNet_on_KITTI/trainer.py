@@ -12,7 +12,7 @@ from dataset import kitti_dataset
 from file_utils import read_from_folder
 
 
-class unet_trainer(pl.lightning_module):
+class unet_trainer(pl.LightningModule):
     hparams: cf.unet_train_config #constant intitialized for each instance
 
     def __init__(self, config: cf.unet_train_config):
@@ -83,5 +83,5 @@ def main(config: cf.unet_train_config, dm: pl.LightningDataModule):
 if __name__ == '__main__':
     from hydra.core.config_store import ConfigStore
     cs = ConfigStore()
-    cs.store('train_base', node=cf.unet_train_config)
+    cs.store('train', node=cf.unet_train_config)
     main()
