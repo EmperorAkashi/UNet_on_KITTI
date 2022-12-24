@@ -68,7 +68,7 @@ class unet_data_module(pl.LightningDataModule):
         return torch.utils.data.Dataloader(self.ds_val, self.batch_size, shuffle=False)
 
 #config_name should consistent with the one in cs.store()
-@hydra.main(config_path=None, config_name='config') 
+@hydra.main(config_path=None, config_name='train') 
 def main(config: cf.unet_train_config, dm: pl.LightningDataModule):
     trainer = pl.Trainer(
         accelerator='gpu',
