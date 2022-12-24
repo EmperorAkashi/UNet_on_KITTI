@@ -50,7 +50,7 @@ class unet_data_module(pl.LightningDataModule):
     def setup(self, stage: str) -> None:
         # Define steps that should be done on 
         # every GPU, like splitting data, applying
-        # transform etc.
+        # transforms etc.
         if self.config.limit is not None:
             limit = min(self.config.limit, len(self.ds))
             self.ds, _ = torch.utils.data.random_split(self.ds, [limit, len(self.ds) - limit])
@@ -70,8 +70,8 @@ class unet_data_module(pl.LightningDataModule):
 
 #config_name should consistent with the one in cs.store()
 #config store turns dataclass into dataframes
-@hydra.main(config_path=None, config_name='train') 
-def main(config: cf.unet_train_config, dm: pl.LightningDataModule):
+@hydra.main(config_path=None, config_name='train', version_base='1.0' ) 
+def main(config: cf.unet_train_config):
     trainer = pl.Trainer(
         accelerator='gpu',
         devices=1)
