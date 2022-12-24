@@ -1,5 +1,5 @@
 import torch
-from UNet_on_KITTI.attention import Attention
+from attention import Attention
 from file_utils import read_from_folder
 from typing import Optional
 
