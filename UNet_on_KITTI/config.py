@@ -1,7 +1,7 @@
 import dataclasses
 from typing import Optional 
 import omegaconf
-from labels import labels, get_numclasses
+from labels import labels#, get_numclasses
 
 from UNet_on_KITTI.model import UNet
 
@@ -30,7 +30,7 @@ class optim_config:
 @dataclasses.dataclass
 class unet_config:
     in_channel: int = 3
-    num_classes: int = get_numclasses(labels)
+    num_classes: int = 20#get_numclasses(labels)
 
 @dataclasses.dataclass
 class unet_train_config:
