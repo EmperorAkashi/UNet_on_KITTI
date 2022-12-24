@@ -70,7 +70,7 @@ class unet_data_module(pl.LightningDataModule):
 
 #config_name should consistent with the one in cs.store()
 #config store turns dataclass into dataframes
-@hydra.main(config_path=None, config_name='train', version_base='1.0' ) 
+@hydra.main(config_path=None, config_name='train', version_base='1.1' ) 
 def main(config: cf.unet_train_config):
     trainer = pl.Trainer(
         accelerator='gpu',
