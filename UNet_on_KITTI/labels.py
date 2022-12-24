@@ -83,3 +83,9 @@ labels = [
     Label(  'bicycle'              , 33 ,       18 , 'vehicle'         , 7       , True         , False        , (119, 11, 32) ),
     Label(  'license plate'        , -1 ,       -1 , 'vehicle'         , 7       , False        , True         , (  0,  0,142) ),
 ]
+
+def get_numclasses(label):
+    seen = set()
+    for l in label:
+        seen.add(l[2])
+    return len(seen)
