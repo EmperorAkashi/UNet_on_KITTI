@@ -1,6 +1,7 @@
 import numpy as np
 import hydra
 import torch
+import torch.nn as nn
 import torch.utils.data
 import pytorch_lightning as pl
 import logging
