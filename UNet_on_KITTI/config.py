@@ -15,7 +15,7 @@ class unet_data_config:
                     files will be read separately by file utils
     train_prop(float): percentage for training
     """
-    file_path: str = "./Kitti"
+    file_path: str = "/mnt/home/clin/ceph/dataset/kitti_semantic"
     train_prop: float = 0.9
     limit: Optional[int] = None
 
