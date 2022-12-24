@@ -1,4 +1,5 @@
 import torch
+import torch.nn as nn
 
 def hw_flattern(x):
     return x.view(x.size()[0],x.size()[1],-1)

@@ -1,7 +1,9 @@
 import torch
+import torch.nn as nn
 from attention import Attention
 from file_utils import read_from_folder
 from typing import Optional
+
 
 "construct Double Convolution block for UNet"
 class DoubleConv(torch.nn.Module):
