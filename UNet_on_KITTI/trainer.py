@@ -14,7 +14,11 @@ from file_utils import read_from_folder
 
 
 class unet_trainer(pl.LightningModule):
-    hparams: cf.unet_train_config #constant intitialized for each instance
+    hparams: cf.unet_train_config 
+    #constant intitialized for each instance
+    #pl module has save_haparams attr, 
+    # enable Lightning to store all the provided arguments 
+    # under the self.hparams attribute
 
     def __init__(self, config: cf.unet_train_config):
         super().__init__()

@@ -16,6 +16,7 @@ class kitti_dataset(Dataset):
         self.transform = transform
         self.dir = dir
         self.df =  read_from_folder(dir)#
+        print(self.df)
 
     def __len__(self):
         return len(self.df[0])
