@@ -17,14 +17,13 @@ class kitti_dataset(Dataset):
         self.transform = transform
         self.dir = dir
         self.df =  read_from_folder(dir)#
-        print(self.df)
 
     def __len__(self):
-        return len(self.df['training'])
+        return len(self.df['image_2'])
 
     def __getitem__(self, index):
-        img_path = os.path.join(self.dir, 'training', self.df['training'][index])
-        seg_path = os.path.join(self.dir, 'semantic', self.df['semantic'][index])
+        img_path = self.df['image_2'][index]
+        seg_path = self.df['semantic_rgb'][index]
         image = cv.imread(img_path)
         segment = cv.imread(seg_path)
         return torch.Tensor(image).permute(2,0,1), torch.Tensor(segment).permute(2,0,1)
