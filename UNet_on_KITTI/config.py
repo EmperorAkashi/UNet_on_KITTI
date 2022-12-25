@@ -14,9 +14,10 @@ class unet_data_config:
                     files will be read separately by file utils
     train_prop(float): percentage for training
     """
-    file_path: str = "/mnt/home/clin/ceph/dataset/kitti_semantic"
+    file_path: str = "/Users/clin/Downloads/NeRF/NeRF_Chen/tutor_lightning/Kitti"#/mnt/home/clin/ceph/dataset/kitti_semantic"
     train_prop: float = 0.9
     limit: Optional[int] = None
+    num_data_workers: int = 16
 
 @dataclasses.dataclass
 class optim_config:

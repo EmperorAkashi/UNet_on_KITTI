@@ -67,10 +67,10 @@ class unet_data_module(pl.LightningDataModule):
         )
 
     def train_dataloader(self):
-        return torch.utils.data.Dataloader(self.ds_train, self.batch_size, shuffle=True)
+        return torch.utils.data.DataLoader(self.ds_train, self.batch_size, shuffle=True, num_workers=self.config.num_data_workers)
 
     def val_dataloader(self):
-        return torch.utils.data.Dataloader(self.ds_val, self.batch_size, shuffle=False)
+        return torch.utils.data.DataLoader(self.ds_val, self.batch_size, shuffle=False, num_workers=self.config.num_data_workers)
 
 #config_name should consistent with the one in cs.store()
 #config store turns dataclass into dataframes
