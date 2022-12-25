@@ -1,0 +1,12 @@
+data:
+  file_path: ???
+  train_prop: 0.9
+  limit: null
+  num_data_workers: 16
+model_config:
+  in_channel: 3
+  num_classes: 21
+optim:
+  learning_rate: 0.001
+batch_size: 64
+num_epochs: 10
