@@ -77,7 +77,7 @@ class unet_data_module(pl.LightningDataModule):
 @hydra.main(config_path=None, config_name='train', version_base='1.1' ) 
 def main(config: cf.unet_train_config):
     trainer = pl.Trainer(
-        accelerator='cpu')
+        accelerator='cpu', log_every_n_steps=config.log_every)
     data_config = config.data
     dm = unet_data_module(data_config, config.batch_size)
     model = unet_trainer(config)
