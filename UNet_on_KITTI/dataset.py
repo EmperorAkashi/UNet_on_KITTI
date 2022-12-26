@@ -22,6 +22,7 @@ class kitti_dataset(Dataset):
         return len(self.df['image_2'])
 
     def __getitem__(self, index):
+        print('num_iterations', index)
         img_path = self.df['image_2'][index]
         seg_path = self.df['semantic_rgb'][index]
         image = cv.imread(img_path)
