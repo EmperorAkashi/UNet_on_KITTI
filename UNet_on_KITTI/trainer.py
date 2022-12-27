@@ -3,6 +3,7 @@ import hydra
 import torch
 import torch.nn as nn
 import torch.utils.data
+from torchvision import transforms
 import pytorch_lightning as pl
 import logging
 import dataclasses
@@ -47,7 +48,10 @@ class unet_data_module(pl.LightningDataModule):
         self.config = config
         self.ds = kitti_dataset(config.file_path)
         self.batch_size = batch_size
-        self.transform = None #place holder, need an appropriate data aug module
+        self.transform = transform.Compose([Resize(self.config.resize[0], self.config.resize[1]), 
+                                   Normalize(mean=self.config.resnet_mean[0], std= self.config.resnet_std[0], p=1), 
+                                   HorizontalFlip(p=0.5),
+                                   VerticalFlip(p=0.5)])
         self.ds_train = None
         self.ds_val = None
 

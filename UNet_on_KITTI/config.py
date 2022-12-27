@@ -1,5 +1,5 @@
 import dataclasses
-from typing import Optional 
+from typing import Optional, Tuple
 import omegaconf
 from labels import labels, get_numclasses
 
@@ -14,11 +14,15 @@ class unet_data_config:
                     files will be read separately by file utils
     train_prop(float): percentage for training
     """
-    file_path: str = omegaconf.MISSING #
+    file_path: str = omegaconf.MISSING #specify on the command line/script
     #"/mnt/home/clin/ceph/dataset/kitti_semantic/training"
     train_prop: float = 0.9
     limit: Optional[int] = None
     num_data_workers: int = 16
+    resize: Tuple = (256,256)
+    resnet_mean: Tuple = (0.485, 0.456, 0.406)
+    resnet_std: Tuple = (0.229, 0.224, 0.225)
+
 
 @dataclasses.dataclass
 class optim_config:
