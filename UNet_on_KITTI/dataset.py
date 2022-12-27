@@ -27,4 +27,5 @@ class kitti_dataset(Dataset):
         seg_path = self.df['semantic_rgb'][index]
         image = cv.imread(img_path)
         segment = cv.imread(seg_path)
+        image, segment = self.transform(image), self.transform(segment)
         return torch.Tensor(image).permute(2,0,1), torch.Tensor(segment).permute(2,0,1)
