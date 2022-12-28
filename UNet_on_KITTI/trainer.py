@@ -48,7 +48,7 @@ class unet_data_module(pl.LightningDataModule):
         super().__init__()
         self.config = config
         self.batch_size = batch_size
-        self.transform = transform.Compose([Resize(self.config.resize[0], self.config.resize[1]), 
+        self.transform = transforms.Compose([Resize(self.config.resize[0], self.config.resize[1]), 
                                    Normalize(mean=self.config.resnet_mean[0], std= self.config.resnet_std[0], p=1), 
                                    HorizontalFlip(p=0.5),
                                    VerticalFlip(p=0.5)],transforms.ToTensor())
