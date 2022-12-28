@@ -14,7 +14,7 @@ class kitti_dataset(Dataset):
     """
 
     def __init__(self, dir, transform = None):
-        self.transform = transform
+        self.transform = transform #transforms will be specified in trainer
         self.dir = dir
         self.df =  read_from_folder(dir)#
 
@@ -29,3 +29,4 @@ class kitti_dataset(Dataset):
         segment = cv.imread(seg_path)
         image, segment = self.transform(image, segment)
         return torch.Tensor(image).permute(2,0,1), torch.Tensor(segment).permute(2,0,1)
+        #totensor and permutation maybe specified in transforms?

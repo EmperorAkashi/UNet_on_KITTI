@@ -48,10 +48,10 @@ class unet_data_module(pl.LightningDataModule):
         super().__init__()
         self.config = config
         self.batch_size = batch_size
-        self.transform = transforms.Compose([Resize(self.config.resize[0], self.config.resize[1]), 
-                                   Normalize(mean=self.config.resnet_mean[0], std= self.config.resnet_std[0], p=1), 
-                                   HorizontalFlip(p=0.5),
-                                   VerticalFlip(p=0.5)],transforms.ToTensor())
+        self.transform = transforms.Compose([transforms.RandomSizedCrop(self.config.crop), 
+                                   transforms.Normalize(mean=self.config.resnet_mean, std= self.config.resnet_std), 
+                                   transforms.RandomHorizontalFlip(),
+                                   ],transforms.ToTensor())
         self.ds = kitti_dataset(hydra.utils.to_absolute_path(self.config.file_path), 
                                 self.transform)
         self.ds_train = None

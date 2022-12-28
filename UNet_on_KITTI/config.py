@@ -1,5 +1,5 @@
 import dataclasses
-from typing import Optional, Tuple
+from typing import Optional, Tuple, List
 import omegaconf
 from labels import labels, get_numclasses
 
@@ -19,9 +19,9 @@ class unet_data_config:
     train_prop: float = 0.9
     limit: Optional[int] = None
     num_data_workers: int = 16
-    resize: Tuple = (256,256)
-    resnet_mean: Tuple = (0.485, 0.456, 0.406)
-    resnet_std: Tuple = (0.229, 0.224, 0.225)
+    crop: int = 256
+    resnet_mean: List = [0.485, 0.456, 0.406]
+    resnet_std: List = [0.229, 0.224, 0.225]
 
 
 @dataclasses.dataclass
