@@ -4,6 +4,7 @@ import torch
 import torch.nn as nn
 import torch.utils.data
 from torchvision import transforms
+from PIL import Image
 import pytorch_lightning as pl
 import logging
 import dataclasses
