@@ -48,7 +48,7 @@ class unet_data_module(pl.LightningDataModule):
         super().__init__()
         self.config = config
         self.batch_size = batch_size
-        self.transform = transforms.Compose([alb.RandomCrop(width=self.config.crop,height=self.config.crop), 
+        self.transform = alb.Compose([alb.RandomCrop(width=self.config.crop,height=self.config.crop), 
                                    alb.Normalize(mean=self.config.resnet_mean, 
                                                         std= self.config.resnet_std,
                                                         p=1), 
