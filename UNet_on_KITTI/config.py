@@ -20,8 +20,8 @@ class unet_data_config:
     limit: Optional[int] = None
     num_data_workers: int = 16
     crop: int = 256
-    resnet_mean: List[float] = [0.485, 0.456, 0.406]
-    resnet_std: List[float] = [0.229, 0.224, 0.225]
+    resnet_mean: List[float] = dataclasses.field(default_factory=lambda:[0.485, 0.456, 0.406])
+    resnet_std: List[float] = dataclasses.field(default_factory=lambda:[0.229, 0.224, 0.225])
 
 
 @dataclasses.dataclass
