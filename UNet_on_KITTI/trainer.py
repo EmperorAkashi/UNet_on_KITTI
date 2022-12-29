@@ -4,7 +4,7 @@ import torch
 import torch.nn as nn
 import torch.utils.data
 from torchvision import transforms
-from PIL import Image
+import albumentations as alb
 import pytorch_lightning as pl
 import logging
 import dataclasses
@@ -48,11 +48,11 @@ class unet_data_module(pl.LightningDataModule):
         super().__init__()
         self.config = config
         self.batch_size = batch_size
-        self.transform = transforms.Compose([transforms.RandomCrop(self.config.crop), 
-                                   transforms.Normalize(mean=self.config.resnet_mean, 
-                                                        std= self.config.resnet_std), 
-                                   transforms.RandomHorizontalFlip(),
-                                   transforms.ToTensor()])
+        self.transform = transforms.Compose([alb.RandomCrop(self.config.crop), 
+                                   alb.Normalize(mean=self.config.resnet_mean, 
+                                                        std= self.config.resnet_std,
+                                                        p = 1), 
+                                   alb.HorizontalFlip(p=0.5)])
         self.ds = kitti_dataset(hydra.utils.to_absolute_path(self.config.file_path), 
                                 self.transform)
         self.ds_train = None
