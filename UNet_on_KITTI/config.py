@@ -36,7 +36,7 @@ class optim_config:
 @dataclasses.dataclass
 class unet_config:
     in_channel: int = 3
-    num_classes: int = get_numclasses(labels)
+    num_classes: int = 3#get_numclasses(labels)
 
 @dataclasses.dataclass
 class unet_train_config:
