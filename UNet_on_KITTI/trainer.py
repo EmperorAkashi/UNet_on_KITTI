@@ -48,10 +48,10 @@ class unet_data_module(pl.LightningDataModule):
         super().__init__()
         self.config = config
         self.batch_size = batch_size
-        self.transform = transforms.Compose([alb.RandomCrop(self.config.crop), 
+        self.transform = transforms.Compose([alb.RandomCrop(width=self.config.crop,height=self.config.crop), 
                                    alb.Normalize(mean=self.config.resnet_mean, 
                                                         std= self.config.resnet_std,
-                                                        p = 1), 
+                                                        p=1), 
                                    alb.HorizontalFlip(p=0.5)])
         self.ds = kitti_dataset(hydra.utils.to_absolute_path(self.config.file_path), 
                                 self.transform)
