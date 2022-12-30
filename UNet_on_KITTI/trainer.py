@@ -1,12 +1,15 @@
 import numpy as np
 import hydra
+import logging
+
 import torch
 import torch.nn as nn
 import torch.utils.data
+import torch.utils.tensorboard 
+
 from torchvision import transforms
 import albumentations as alb
 import pytorch_lightning as pl
-import logging
 import dataclasses
 import config as cf
 from model import UNet
@@ -30,12 +33,24 @@ class unet_trainer(pl.LightningModule):
     def forward(self, x):
         return self.unet(x)
 
+    def training_log(self, batch, pred:torch.Tensor, mask:torch.Tensor, loss: float, batch_idx: int):
+        if batch_idx % 20 == 0:
+            self.logger.experiment.add_images(
+                'predict/mask',
+                torch.stack([
+                    pred.detach()[0],
+                    mask[0]
+                    ], dim=0).unsqueeze_(-1),
+                self.global_step,
+                dataformats='NHWC'
+            )
+        self.log('train/loss', loss)
+
     def training_step(self, batch, batch_idx: int):
         image, mask = batch
-        print("image", image.shape)
-        print("mask", mask.shape)
         predict = self(image) #self call forward by default
         loss = dice_loss(predict, mask)
+        self.training_log(batch, predict, mask, loss, batch_idx)
         return loss
         
     #need validation step
