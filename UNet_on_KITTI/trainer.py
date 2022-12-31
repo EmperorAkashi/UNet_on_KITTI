@@ -50,7 +50,7 @@ class unet_trainer(pl.LightningModule):
         image, mask = batch
         predict = self(image) #self call forward by default
         loss = dice_loss(predict, mask)
-        self.training_log(batch, predict, mask, loss, batch_idx)
+        #self.training_log(batch, predict, mask, loss, batch_idx)
         return loss
         
     #need validation step
@@ -65,13 +65,11 @@ class unet_data_module(pl.LightningDataModule):
         super().__init__()
         self.config = config
         self.batch_size = batch_size
-        self.transform = alb.Compose([alb.RandomCrop(width=self.config.crop,height=self.config.crop), 
-                                   alb.Normalize(mean=self.config.resnet_mean, 
-                                                        std= self.config.resnet_std,
-                                                        p=1), 
-                                   alb.HorizontalFlip(p=0.5)])
+        self.transform = alb.Compose([alb.RandomCrop(width=self.config.crop,height=self.config.crop),  
+                                      alb.HorizontalFlip(p=0.5)])
+        self.norm = alb.Normalize() #use default mean and std
         self.ds = kitti_dataset(hydra.utils.to_absolute_path(self.config.file_path), 
-                                self.transform)
+                                self.transform, self.norm)
         self.ds_train = None
         self.ds_val = None
 
