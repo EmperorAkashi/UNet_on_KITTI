@@ -25,13 +25,13 @@ class kitti_dataset(Dataset):
     def __getitem__(self, index):
         img_path = self.df['image_2'][index]
         seg_path = self.df['semantic_rgb'][index]
-        image = cv.imread(img_path)
+        image_ = cv.imread(img_path)
         segment = cv.imread(seg_path)
-        augment = self.transform(image=image, mask=segment) #transform used here are from albulmentations
+        augment = self.transform(image=image_, mask=segment) #transform used here are from albulmentations
         img_aug = augment['image']
         msk_aug = augment['mask']
         #normalize image&mask separately
-        norm_img, norm_msk = self.norm(image=img_aug), self.norm(mask=msk_aug)
-        img_norm, msk_norm = norm_img['image'], norm_msk['mask'] 
+        norm_img, norm_msk = self.norm(image=img_aug), self.norm(image=msk_aug)
+        img_norm, msk_norm = norm_img['image'], norm_msk['image'] 
         return torch.Tensor(img_norm).permute(2,0,1), torch.Tensor(msk_norm).permute(2,0,1)
         #totensor and permutation maybe specified in transforms?
