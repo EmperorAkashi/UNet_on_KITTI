@@ -47,13 +47,17 @@ class unet_trainer(pl.LightningModule):
         self.log('train/loss', loss)
 
     def training_step(self, batch, batch_idx: int):
-        image, mask = batch
+        image, mask = batch #loader create an iterator
         predict = self(image) #self call forward by default
         loss = dice_loss(predict, mask)
         #self.training_log(batch, predict, mask, loss, batch_idx)
         return loss
         
-    #need validation step
+    def validation_step(self, batch, batch_idx: int):
+        image, mask = batch
+        predict = self(image) #self call forward by default
+        loss = dice_loss(predict, mask)
+        #self.training_log(batch, predict, mask, loss, batch_idx)
 
     def configure_optimizers(self):
         optim = torch.optim.AdamW(self.unet.parameters(), lr=self.hparams.optim.learning_rate)
