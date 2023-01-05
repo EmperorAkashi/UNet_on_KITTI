@@ -16,6 +16,7 @@ from model import UNet
 from dice_loss import dice_loss
 from dataset import kitti_dataset
 from file_utils import read_from_folder
+import metric as M
 
 
 class unet_trainer(pl.LightningModule):
@@ -34,6 +35,9 @@ class unet_trainer(pl.LightningModule):
         return self.unet(x)
 
     def training_log(self, batch, pred:torch.Tensor, mask:torch.Tensor, loss: float, batch_idx: int):
+        #Lightning offers automatic log functionalities for logging scalars, 
+        # or manual logging for anything else
+        jaccard = M.mIoU(mask,pred)
         if batch_idx % 20 == 0:
             self.logger.experiment.add_images(
                 'predict/mask',
@@ -45,19 +49,37 @@ class unet_trainer(pl.LightningModule):
                 dataformats='NHWC'
             )
         self.log('train/loss', loss)
+        self.log('mIou', jaccard)
 
     def training_step(self, batch, batch_idx: int):
         image, mask = batch #loader create an iterator
         predict = self(image) #self call forward by default
         loss = dice_loss(predict, mask)
-        #self.training_log(batch, predict, mask, loss, batch_idx)
+        self.training_log(batch, predict, mask, loss, batch_idx)
         return loss
+
+    def validation_log(self, batch, pred:torch.Tensor, mask:torch.Tensor, loss: float, batch_idx: int):
+        jaccard = M.mIoU(mask,pred)
+
+        self.log('train/loss', loss)
+        self.log('mIou', jaccard)
+
+        tb = self.logger.experiment
+        tb.add_images(
+                'predict/mask',
+                torch.stack([
+                    pred.detach()[0],
+                    mask[0]
+                    ], dim=0).unsqueeze_(-1),
+                self.global_step,
+                dataformats='NHWC'
+            )
         
     def validation_step(self, batch, batch_idx: int):
         image, mask = batch
         predict = self(image) #self call forward by default
         loss = dice_loss(predict, mask)
-        #self.training_log(batch, predict, mask, loss, batch_idx)
+        self.validation_log(batch, predict, mask, loss, batch_idx)
 
     def configure_optimizers(self):
         optim = torch.optim.AdamW(self.unet.parameters(), lr=self.hparams.optim.learning_rate)
@@ -102,15 +124,20 @@ class unet_data_module(pl.LightningDataModule):
 #config store turns dataclass into dataframes
 @hydra.main(config_path=None, config_name='train', version_base='1.1' ) 
 def main(config: cf.unet_train_config):
+    logger = logging.getLogger(__name__)
     trainer = pl.Trainer(
         accelerator='cpu', 
         log_every_n_steps=config.log_every,
         max_epochs=config.num_epochs)
+    
     data_config = config.data
     dm = unet_data_module(data_config, config.batch_size)
     model = unet_trainer(config)
 
     trainer.fit(model,dm)
+
+    if trainer.is_global_zero:
+        logger.info(f'Finished training. Final loss: {trainer.logged_metrics["loss"]}')
           
 
 if __name__ == '__main__':
