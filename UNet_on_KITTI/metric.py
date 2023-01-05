@@ -4,4 +4,4 @@ import sklearn as sk
 
 
 def mIoU(predict, mask):
-    return sk.metrics.jaccard_score
+    return sk.metrics.jaccard_score(mask, predict)
