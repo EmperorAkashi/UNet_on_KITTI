@@ -52,11 +52,11 @@ class out_layer(torch.nn.Module):
     def __init__(self, in_ch, num_class):
         super().__init__()
         self.conv = nn.Conv2d(in_ch, num_class, 1) #final layer by 1x1 conv
-        self.sigmoid = nn.Sigmoid() #elementwise calculation of sigmoid, each layer (class)
+        self.softmax = nn.Softmax() #elementwise calculation of sigmoid, each layer (class)
         
     def forward(self, x) -> torch.Tensor:
         x = self.conv(x)
-        x = self.sigmoid(x)
+        x = self.softmax(x)
         return x  
 
 "construct Unet"

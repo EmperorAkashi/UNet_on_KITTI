@@ -1,4 +1,6 @@
 from collections import namedtuple
+from typing import Optional, List
+import numpy as np
 
 Label = namedtuple( 'Label' , [
 
@@ -84,8 +86,29 @@ labels = [
     Label(  'license plate'        , -1 ,       -1 , 'vehicle'         , 7       , False        , True         , (  0,  0,142) ),
 ]
 
-def get_numclasses(label):
-    seen = set()
+def labels_to_dict(label):
+    channel_dict = collections.defaultdict(int)
+    class_cnt = 0
     for l in label:
-        seen.add(l[2])
-    return len(seen)
+        #convert channel to tuple for hashable; 
+        #reverse list due to mask pixel has reversed sequence
+        curr = tuple(l[7][::-1])
+        if curr not in channel_dict:
+            channel_dict[curr] = class_cnt
+            class_cnt += 1
+    
+    return channel_dict
+
+def rgb_to_onehot(mask_rgb: List) -> np.ndarray:
+    m, n, _ = mask_rgb.shape
+    class_dict = process_labels(labels)
+    n_channel = len(class_dict)
+    vectorize_mask = np.zeros((m,n,n_channel))
+    m, n, _ = shape
+
+    for r in range(m):
+        for c in range(n):
+            curr_color = tuple(mask_rgb[r][c])
+            vectorize_mask[r][c][class_dict[curr_color]] = 1
+            
+    return vectorize_mask

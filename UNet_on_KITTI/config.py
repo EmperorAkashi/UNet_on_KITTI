@@ -1,7 +1,7 @@
 import dataclasses
 from typing import Optional, Tuple, List
 import omegaconf
-from labels import labels, get_numclasses
+import labels as lb
 
 from model import UNet
 
@@ -36,7 +36,7 @@ class optim_config:
 @dataclasses.dataclass
 class unet_config:
     in_channel: int = 3
-    num_classes: int = 3#get_numclasses(labels)
+    num_classes: int = len(lb.labels_to_dict(lb.labels))
 
 @dataclasses.dataclass
 class unet_train_config:

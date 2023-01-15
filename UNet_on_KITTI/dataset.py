@@ -4,6 +4,7 @@ import os
 import cv2 as cv
 from file_utils import read_from_folder
 import torch
+import labels as lb
 
 
 class kitti_dataset(Dataset):
@@ -27,6 +28,7 @@ class kitti_dataset(Dataset):
         seg_path = self.df['semantic_rgb'][index]
         image_ = cv.imread(img_path)
         segment = cv.imread(seg_path)
+        segment = lb.rgb_to_onehot(segment)
         augment = self.transform(image=image_, mask=segment) #transform used here are from albulmentations
         img_aug = augment['image']
         msk_aug = augment['mask']
