@@ -105,8 +105,7 @@ def rgb_to_onehot(mask_rgb: List) -> np.ndarray:
     class_dict = labels_to_dict(labels)
     n_channel = len(class_dict)
     vectorize_mask = np.zeros((m,n,n_channel))
-    m, n, _ = shape
-
+    
     for r in range(m):
         for c in range(n):
             curr_color = tuple(mask_rgb[r][c])
