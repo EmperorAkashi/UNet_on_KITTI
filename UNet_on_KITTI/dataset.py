@@ -33,7 +33,7 @@ class kitti_dataset(Dataset):
         img_aug = augment['image']
         msk_aug = augment['mask']
         #normalize image&mask separately
-        norm_img, norm_msk = self.norm(image=img_aug), self.norm(image=msk_aug)
-        img_norm, msk_norm = norm_img['image'], norm_msk['image'] 
-        return torch.Tensor(img_norm).permute(2,0,1), torch.Tensor(msk_norm).permute(2,0,1)
+        norm_img = self.norm(image=img_aug)
+        img_norm = norm_img['image']
+        return torch.Tensor(img_norm).permute(2,0,1), torch.Tensor(msk_aug).permute(2,0,1)
         #totensor and permutation maybe specified in transforms?
