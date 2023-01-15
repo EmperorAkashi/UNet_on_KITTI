@@ -1,6 +1,7 @@
 from collections import namedtuple
 from typing import Optional, List
 import numpy as np
+import collections
 
 Label = namedtuple( 'Label' , [
 
@@ -110,5 +111,5 @@ def rgb_to_onehot(mask_rgb: List) -> np.ndarray:
         for c in range(n):
             curr_color = tuple(mask_rgb[r][c])
             vectorize_mask[r][c][class_dict[curr_color]] = 1
-            
+
     return vectorize_mask
