@@ -64,7 +64,7 @@ class unet_trainer(pl.LightningModule):
 
         self.log('train/loss', loss)
         #self.log('mIou', jaccard)
-
+        print("val",pred.shape,mask.shape)
         tb = self.logger.experiment
         tb.add_images(
                 'predict/mask',
@@ -80,7 +80,6 @@ class unet_trainer(pl.LightningModule):
         image, mask = batch
         predict = self(image) #self call forward by default
         loss = dice_loss(predict, mask)
-        print("val",predict.shape,mask.shape)
         self.validation_log(batch, predict, mask, loss, batch_idx)
 
     def configure_optimizers(self):
