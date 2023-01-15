@@ -55,6 +55,7 @@ class unet_trainer(pl.LightningModule):
         image, mask = batch #loader create an iterator
         predict = self(image) #self call forward by default
         loss = dice_loss(predict, mask)
+        print("train",predict.shape,mask.shape)
         self.training_log(batch, predict, mask, loss, batch_idx)
         return loss
 
@@ -79,6 +80,7 @@ class unet_trainer(pl.LightningModule):
         image, mask = batch
         predict = self(image) #self call forward by default
         loss = dice_loss(predict, mask)
+        print("val",predict.shape,mask.shape)
         self.validation_log(batch, predict, mask, loss, batch_idx)
 
     def configure_optimizers(self):
