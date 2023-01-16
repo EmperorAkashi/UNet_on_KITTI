@@ -44,9 +44,9 @@ class unet_trainer(pl.LightningModule):
                 torch.stack([
                     pred.detach()[0],
                     mask[0]
-                    ], dim=0).unsqueeze_(-1),
+                    ], dim=0)#.unsqueeze_(-1),
                 self.global_step,
-                dataformats='NHWC'
+                dataformats='NCHW'
             )
         self.log('train/loss', loss)
         #self.log('mIou', jaccard)
@@ -71,9 +71,9 @@ class unet_trainer(pl.LightningModule):
                 torch.stack([
                     pred.detach()[0],
                     mask[0]
-                    ], dim=0).unsqueeze_(-1),
+                    ], dim=0)#.unsqueeze_(-1),
                 self.global_step,
-                dataformats='NHWC'
+                dataformats='NCHW'
             )
         
     def validation_step(self, batch, batch_idx: int):
