@@ -13,7 +13,7 @@ import pytorch_lightning as pl
 import dataclasses
 import config as cf
 from model import UNet
-from dice_loss import dice_loss
+import metric as M
 from dataset import kitti_dataset
 from file_utils import read_from_folder
 import metric as M
@@ -37,7 +37,7 @@ class unet_trainer(pl.LightningModule):
     def training_log(self, batch, pred:torch.Tensor, mask:torch.Tensor, loss: float, batch_idx: int):
         #Lightning offers automatic log functionalities for logging scalars, 
         # or manual logging for anything else
-        #jaccard = M.mIoU(mask,pred)
+        jaccard = M.m_jaccard(mask,pred)
         # if batch_idx % 20 == 0:
         #     self.logger.experiment.add_images(
         #         'predict/mask',
@@ -49,22 +49,20 @@ class unet_trainer(pl.LightningModule):
         #         dataformats='NCHW'
         #     )
         self.log('train/loss', loss)
-        #self.log('mIou', jaccard)
+        self.log('mIou', jaccard)
 
     def training_step(self, batch, batch_idx: int):
         image, mask = batch #loader create an iterator
         predict = self(image) #self call forward by default
-        loss = dice_loss(predict, mask)
-        print("train",predict.shape,mask.shape)
+        loss = M.dice_loss(predict, mask)
         self.training_log(batch, predict, mask, loss, batch_idx)
         return loss
 
     def validation_log(self, batch, pred:torch.Tensor, mask:torch.Tensor, loss: float, batch_idx: int):
-        #jaccard = M.mIoU(mask,pred)
+        jaccard = M.m_jaccard(mask,pred)
 
-        self.log('train/loss', loss)
-        #self.log('mIou', jaccard)
-        print("val",pred.shape,mask.shape)
+        self.log('val/loss', loss)
+        self.log('mIou', jaccard)
         tb = self.logger.experiment
         # tb.add_images(
         #         'predict/mask',
@@ -79,7 +77,7 @@ class unet_trainer(pl.LightningModule):
     def validation_step(self, batch, batch_idx: int):
         image, mask = batch
         predict = self(image) #self call forward by default
-        loss = dice_loss(predict, mask)
+        loss = M.dice_loss(predict, mask)
         self.validation_log(batch, predict, mask, loss, batch_idx)
 
     def configure_optimizers(self):
@@ -127,7 +125,7 @@ class unet_data_module(pl.LightningDataModule):
 def main(config: cf.unet_train_config):
     logger = logging.getLogger(__name__)
     trainer = pl.Trainer(
-        accelerator='cpu', 
+        accelerator='gpu', 
         log_every_n_steps=config.log_every,
         max_epochs=config.num_epochs)
     
@@ -138,7 +136,7 @@ def main(config: cf.unet_train_config):
     trainer.fit(model,dm)
 
     if trainer.is_global_zero:
-        logger.info(f'Finished training. Final loss: {trainer.logged_metrics["loss"]}')
+        logger.info(f'Finished training. Final loss: {trainer.logged_metrics["train/loss"]}')
           
 
 if __name__ == '__main__':
