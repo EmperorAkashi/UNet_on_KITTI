@@ -44,7 +44,7 @@ class unet_trainer(pl.LightningModule):
                 torch.stack([
                     pred.detach()[0],
                     mask[0]
-                    ], dim=0)#.unsqueeze_(-1),
+                    ], dim=0),#.unsqueeze_(-1),
                 self.global_step,
                 dataformats='NCHW'
             )
@@ -71,7 +71,7 @@ class unet_trainer(pl.LightningModule):
                 torch.stack([
                     pred.detach()[0],
                     mask[0]
-                    ], dim=0)#.unsqueeze_(-1),
+                    ], dim=0),#.unsqueeze_(-1),
                 self.global_step,
                 dataformats='NCHW'
             )
