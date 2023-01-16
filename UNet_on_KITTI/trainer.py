@@ -38,16 +38,16 @@ class unet_trainer(pl.LightningModule):
         #Lightning offers automatic log functionalities for logging scalars, 
         # or manual logging for anything else
         #jaccard = M.mIoU(mask,pred)
-        if batch_idx % 20 == 0:
-            self.logger.experiment.add_images(
-                'predict/mask',
-                torch.stack([
-                    pred.detach()[0],
-                    mask[0]
-                    ], dim=0),#.unsqueeze_(-1),
-                self.global_step,
-                dataformats='NCHW'
-            )
+        # if batch_idx % 20 == 0:
+        #     self.logger.experiment.add_images(
+        #         'predict/mask',
+        #         torch.stack([
+        #             pred.detach()[0],
+        #             mask[0]
+        #             ], dim=0),#.unsqueeze_(-1),
+        #         self.global_step,
+        #         dataformats='NCHW'
+        #     )
         self.log('train/loss', loss)
         #self.log('mIou', jaccard)
 
@@ -66,15 +66,15 @@ class unet_trainer(pl.LightningModule):
         #self.log('mIou', jaccard)
         print("val",pred.shape,mask.shape)
         tb = self.logger.experiment
-        tb.add_images(
-                'predict/mask',
-                torch.stack([
-                    pred.detach()[0],
-                    mask[0]
-                    ], dim=0),#.unsqueeze_(-1),
-                self.global_step,
-                dataformats='NCHW'
-            )
+        # tb.add_images(
+        #         'predict/mask',
+        #         torch.stack([
+        #             pred.detach()[0],
+        #             mask[0]
+        #             ], dim=0),#.unsqueeze_(-1),
+        #         self.global_step,
+        #         dataformats='NCHW'
+        #     )
         
     def validation_step(self, batch, batch_idx: int):
         image, mask = batch
