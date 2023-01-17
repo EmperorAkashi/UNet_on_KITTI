@@ -23,7 +23,7 @@ def m_dice_score(mask:torch.Tensor, pred:torch.Tensor) -> torch.Tensor:
     mask(tensor): labels in one hot format
     pred(tensor): predicted map
     """
-    channel_num, _, _ = mask.shape
+    channel_num, r, c = mask.shape
     
     score = torch.zeros(channel_num)
 
