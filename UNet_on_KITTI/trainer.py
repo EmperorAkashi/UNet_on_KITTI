@@ -125,8 +125,8 @@ class unet_data_module(pl.LightningDataModule):
 def main(config: cf.unet_train_config):
     logger = logging.getLogger(__name__)
     trainer = pl.Trainer(
-        accelerator='gpu', 
-        devices=config.num_gpus,
+        accelerator='cpu', 
+        #devices=config.num_gpus,
         log_every_n_steps=config.log_every,
         max_epochs=config.num_epochs)
     
