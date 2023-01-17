@@ -128,7 +128,7 @@ class unet_data_module(pl.LightningDataModule):
 def main(config: cf.unet_train_config):
     logger = logging.getLogger(__name__)
     trainer = pl.Trainer(
-        accelerator='gpu', 
+        accelerator='cpu', 
         devices=config.num_gpus,
         log_every_n_steps=config.log_every,
         max_epochs=config.num_epochs)
@@ -141,6 +141,8 @@ def main(config: cf.unet_train_config):
 
     if trainer.is_global_zero:
         logger.info(f'Finished training. Final loss: {trainer.logged_metrics["train/loss"]}')
+        logger.info(f'Finished training. Final F1-score: {trainer.logged_metrics["train/dice"]}')
+        logger.info(f'Finished training. Final mIoU: {trainer.logged_metrics["train/mIoU"]}')
           
 
 if __name__ == '__main__':
