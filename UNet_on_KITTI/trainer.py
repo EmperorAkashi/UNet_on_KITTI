@@ -78,6 +78,7 @@ class unet_trainer(pl.LightningModule):
     def validation_step(self, batch, batch_idx: int):
         image, mask = batch
         predict = self(image) #self call forward by default
+        print("training", predict.shape, mask.shape)
         loss = M.dice_loss(predict, mask)
         self.validation_log(batch, predict, mask, loss, batch_idx)
 
