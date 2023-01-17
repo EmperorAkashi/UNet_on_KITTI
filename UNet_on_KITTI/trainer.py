@@ -54,6 +54,7 @@ class unet_trainer(pl.LightningModule):
     def training_step(self, batch, batch_idx: int):
         image, mask = batch #loader create an iterator
         predict = self(image) #self call forward by default
+        print("training", predict.shape, mask.shape)
         loss = M.dice_loss(predict, mask)
         self.training_log(batch, predict, mask, loss, batch_idx)
         return loss
