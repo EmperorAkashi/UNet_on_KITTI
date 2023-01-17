@@ -37,7 +37,7 @@ class unet_trainer(pl.LightningModule):
     def training_log(self, batch, pred:torch.Tensor, mask:torch.Tensor, loss: float, batch_idx: int):
         #Lightning offers automatic log functionalities for logging scalars, 
         # or manual logging for anything else
-        jaccard = M.m_jaccard(mask,pred)
+        jaccard = M.metric_every_batch(mask, pred, M.m_jaccard)
         # if batch_idx % 20 == 0:
         #     self.logger.experiment.add_images(
         #         'predict/mask',
@@ -54,13 +54,12 @@ class unet_trainer(pl.LightningModule):
     def training_step(self, batch, batch_idx: int):
         image, mask = batch #loader create an iterator
         predict = self(image) #self call forward by default
-        print("training", predict.shape, mask.shape)
-        loss = M.dice_loss(predict, mask)
+        loss = M.metric_every_batch(mask, predict, M.dice_loss)
         self.training_log(batch, predict, mask, loss, batch_idx)
         return loss
 
     def validation_log(self, batch, pred:torch.Tensor, mask:torch.Tensor, loss: float, batch_idx: int):
-        jaccard = M.m_jaccard(mask,pred)
+        jaccard = M.metric_every_batch(mask, pred, M.m_jaccard)
 
         self.log('val/loss', loss)
         self.log('mIou', jaccard)
@@ -79,7 +78,7 @@ class unet_trainer(pl.LightningModule):
         image, mask = batch
         predict = self(image) #self call forward by default
         print("training", predict.shape, mask.shape)
-        loss = M.dice_loss(predict, mask)
+        loss = M.metric_every_batch(mask, predict, M.dice_loss)
         self.validation_log(batch, predict, mask, loss, batch_idx)
 
     def configure_optimizers(self):

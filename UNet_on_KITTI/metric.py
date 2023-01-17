@@ -1,7 +1,7 @@
 import numpy as np
 import torch
 import sklearn as sk
-from typing import Optional 
+from typing import Optional, Callable
 
 def dice_score_one(inputs:torch.Tensor, targets:torch.Tensor, smooth=1e-5) -> torch.Tensor:      
     """
@@ -23,7 +23,7 @@ def m_dice_score(mask:torch.Tensor, pred:torch.Tensor) -> torch.Tensor:
     mask(tensor): labels in one hot format
     pred(tensor): predicted map
     """
-    channel_num, r, c = mask.shape
+    channel_num, _, _ = mask.shape
     
     score = torch.zeros(channel_num)
 
@@ -66,3 +66,13 @@ def m_jaccard(mask:torch.Tensor, pred:torch.Tensor, smooth=1e-5) -> torch.Tensor
         score[i] = curr_score
         
     return torch.mean(score)
+
+def metric_every_batch(mask:torch.Tensor, pred:torch.Tensor, criterion:Callable) -> torch.Tensor:
+    n = len(mask)
+    curr_batch_loss = torch.zeros(n)
+
+    for i in range(n):
+        curr_metric = criterion(mask[i], pred[i])
+        curr_batch_loss[i] = curr_metric
+
+    return torch.mean(curr_batch_loss)
