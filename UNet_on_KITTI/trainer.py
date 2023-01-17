@@ -126,7 +126,7 @@ def main(config: cf.unet_train_config):
     logger = logging.getLogger(__name__)
     trainer = pl.Trainer(
         accelerator='gpu', 
-        device=config.num_gpus
+        device=config.num_gpus,
         log_every_n_steps=config.log_every,
         max_epochs=config.num_epochs)
     
