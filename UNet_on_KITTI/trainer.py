@@ -49,7 +49,8 @@ class unet_trainer(pl.LightningModule):
         #         dataformats='NCHW'
         #     )
         self.log('train/loss', loss)
-        self.log('mIou', jaccard)
+        self.log('train/dice', 1 - loss)
+        self.log('train/mIou', jaccard)
 
     def training_step(self, batch, batch_idx: int):
         image, mask = batch #loader create an iterator
@@ -62,7 +63,8 @@ class unet_trainer(pl.LightningModule):
         jaccard = M.metric_every_batch(mask, pred, M.m_jaccard)
 
         self.log('val/loss', loss)
-        self.log('mIou', jaccard)
+        self.log('val/dice', 1 - loss)
+        self.log('val/mIou', jaccard)
         tb = self.logger.experiment
         # tb.add_images(
         #         'predict/mask',
@@ -126,8 +128,8 @@ class unet_data_module(pl.LightningDataModule):
 def main(config: cf.unet_train_config):
     logger = logging.getLogger(__name__)
     trainer = pl.Trainer(
-        accelerator='cpu', 
-        #devices=config.num_gpus,
+        accelerator='gpu', 
+        devices=config.num_gpus,
         log_every_n_steps=config.log_every,
         max_epochs=config.num_epochs)
     
