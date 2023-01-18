@@ -50,7 +50,7 @@ class unet_trainer(pl.LightningModule):
         #     )
         self.log('train/loss', loss)
         self.log('train/dice', 1 - loss)
-        self.log('train/mIou', jaccard)
+        self.log('train/mIoU', jaccard)
 
     def training_step(self, batch, batch_idx: int):
         image, mask = batch #loader create an iterator
@@ -64,7 +64,7 @@ class unet_trainer(pl.LightningModule):
 
         self.log('val/loss', loss)
         self.log('val/dice', 1 - loss)
-        self.log('val/mIou', jaccard)
+        self.log('val/mIoU', jaccard)
         tb = self.logger.experiment
         # tb.add_images(
         #         'predict/mask',
@@ -79,7 +79,6 @@ class unet_trainer(pl.LightningModule):
     def validation_step(self, batch, batch_idx: int):
         image, mask = batch
         predict = self(image) #self call forward by default
-        print("training", predict.shape, mask.shape)
         loss = M.metric_every_batch(mask, predict, M.dice_loss)
         self.validation_log(batch, predict, mask, loss, batch_idx)
 
