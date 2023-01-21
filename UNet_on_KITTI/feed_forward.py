@@ -1,7 +1,7 @@
 import torch
 import torch.nn as nn
 
-class feed_forward:
+class feed_forward(nn.Module):
     def __init__(self, in_ch, out_ch, hidden_layer):
         super(feed_forward).__init__()
         self.l1 = nn.Linear(in_ch, hidden_layer)
