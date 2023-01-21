@@ -37,7 +37,7 @@ class optim_config:
 class unet_config:
     in_channel: int = 3
     num_classes: int = len(lb.labels_to_dict(lb.labels))
-    hidden_layer: int = None
+    hidden_layer: Optional[int] = None
 
 @dataclasses.dataclass
 class unet_train_config:
