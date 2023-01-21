@@ -16,7 +16,7 @@ from model import UNet
 import metric as M
 from dataset import kitti_dataset
 from file_utils import read_from_folder
-import metric as M
+import feed_forward as F
 
 
 class unet_trainer(pl.LightningModule):
@@ -30,8 +30,12 @@ class unet_trainer(pl.LightningModule):
         super().__init__()
         self.save_hyperparameters(config)
         self.unet = UNet(config.model_config.in_channel, config.model_config.num_classes)
-
+        self.fcn = F.feed_forward(config.model_config.in_channel, config.model_config.num_classes, 
+                                config.model_config.hidden_layer)
+        self.config = config
     def forward(self, x):
+        if self.config.debug:
+            return self.fcn(x)
         return self.unet(x)
 
     def training_log(self, batch, pred:torch.Tensor, mask:torch.Tensor, loss: float, batch_idx: int):
@@ -55,6 +59,10 @@ class unet_trainer(pl.LightningModule):
     def training_step(self, batch, batch_idx: int):
         image, mask = batch #loader create an iterator
         predict = self(image) #self call forward by default
+        if self.config.debug:
+            side = self.config.data.crop
+            channel = self.config.model_config.num_classes
+            predict = predict.reshape(batch.size(), channel, side, side)
         loss = M.metric_every_batch(mask, predict, M.dice_loss)
         self.training_log(batch, predict, mask, loss, batch_idx)
         return loss

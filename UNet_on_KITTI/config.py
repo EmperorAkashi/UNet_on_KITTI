@@ -37,6 +37,7 @@ class optim_config:
 class unet_config:
     in_channel: int = 3
     num_classes: int = len(lb.labels_to_dict(lb.labels))
+    hidden_layer: int = None
 
 @dataclasses.dataclass
 class unet_train_config:
@@ -47,5 +48,6 @@ class unet_train_config:
     num_epochs: int = 10
     num_gpus: int = 1
     log_every: int = 1
+    debug: bool = False
 
 

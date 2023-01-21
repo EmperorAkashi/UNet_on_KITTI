@@ -14,11 +14,12 @@ class kitti_dataset(Dataset):
     will outputs a dict with {folder: [list file names]}
     """
 
-    def __init__(self, dir, transform = None, norm = None):
+    def __init__(self, dir, transform = None, norm = None, debug = None):
         self.transform = transform #transforms will be specified in trainer
         self.norm = norm
         self.dir = dir
         self.df =  read_from_folder(dir)
+        self.debug = debug
 
     def __len__(self):
         return len(self.df['image_2'])
@@ -35,5 +36,7 @@ class kitti_dataset(Dataset):
         #normalize image&mask separately
         norm_img = self.norm(image=img_aug)
         img_norm = norm_img['image']
+        if self.debug:
+            return torch.Tensor(img_norm).view(-1), torch.Tensor(msk_aug).permute(2,0,1)
         return torch.Tensor(img_norm).permute(2,0,1), torch.Tensor(msk_aug).permute(2,0,1)
         #totensor and permutation maybe specified in transforms?
