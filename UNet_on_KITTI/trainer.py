@@ -90,8 +90,8 @@ class unet_trainer(pl.LightningModule):
         if self.config.debug:
             side = self.config.data.crop
             channel = self.config.model_config.num_classes
-            print(predict[0].type)
-            predict = predict.reshape(batch.size(), channel, side, side)
+            print(predict.type)
+            predict = [pred.reshape(channel, side, side) for pred in predict]
         loss = M.metric_every_batch(mask, predict, M.dice_loss)
         self.validation_log(batch, predict, mask, loss, batch_idx)
 
