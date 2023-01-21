@@ -86,7 +86,11 @@ class unet_trainer(pl.LightningModule):
         
     def validation_step(self, batch, batch_idx: int):
         image, mask = batch
-        predict = self(image) #self call forward by default
+        predict = self(image) 
+        if self.config.debug:
+            side = self.config.data.crop
+            channel = self.config.model_config.num_classes
+            predict = predict.reshape(batch.size(), channel, side, side)
         loss = M.metric_every_batch(mask, predict, M.dice_loss)
         self.validation_log(batch, predict, mask, loss, batch_idx)
 
@@ -96,15 +100,16 @@ class unet_trainer(pl.LightningModule):
 
 
 class unet_data_module(pl.LightningDataModule):
-    def __init__(self, config: cf.unet_data_config, batch_size) -> None:
+    def __init__(self, config: cf.unet_data_config, batch_size: int, debug: bool) -> None:
         super().__init__()
         self.config = config
         self.batch_size = batch_size
         self.transform = alb.Compose([alb.RandomCrop(width=self.config.crop,height=self.config.crop),  
                                       alb.HorizontalFlip(p=0.5)])
         self.norm = alb.Normalize() #use default mean and std
+        self.debug = debug
         self.ds = kitti_dataset(hydra.utils.to_absolute_path(self.config.file_path), 
-                                self.transform, self.norm)
+                                self.transform, self.norm, self.debug)
         self.ds_train = None
         self.ds_val = None
 
@@ -141,7 +146,7 @@ def main(config: cf.unet_train_config):
         max_epochs=config.num_epochs)
     
     data_config = config.data
-    dm = unet_data_module(data_config, config.batch_size)
+    dm = unet_data_module(data_config, config.batch_size, config.debug)
     model = unet_trainer(config)
 
     trainer.fit(model,dm)
