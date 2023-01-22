@@ -31,7 +31,7 @@ class unet_trainer(pl.LightningModule):
         self.save_hyperparameters(config)
         self.unet = UNet(config.model_config.in_channel, config.model_config.num_classes)
         self.fcn = F.feed_forward(config.model_config.in_channel, config.model_config.num_classes, 
-                                config.model_config.hidden_layer)
+                                config.model_config.kernel_size)
         self.config = config
     def forward(self, x):
         if self.config.debug:
