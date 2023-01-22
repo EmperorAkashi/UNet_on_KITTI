@@ -59,10 +59,7 @@ class unet_trainer(pl.LightningModule):
     def training_step(self, batch, batch_idx: int):
         image, mask = batch #loader create an iterator
         predict = self(image) #self call forward by default
-        if self.config.debug:
-            side = self.config.data.crop
-            channel = self.config.model_config.num_classes
-            predict = predict.reshape(batch.size(), channel, side, side)
+       
         loss = M.metric_every_batch(mask, predict, M.dice_loss)
         self.training_log(batch, predict, mask, loss, batch_idx)
         return loss
@@ -87,11 +84,7 @@ class unet_trainer(pl.LightningModule):
     def validation_step(self, batch, batch_idx: int):
         image, mask = batch
         predict = self(image) 
-        if self.config.debug:
-            side = self.config.data.crop
-            channel = self.config.model_config.num_classes
-            print(predict.type)
-            predict = predict.reshape(len(batch), channel, side, side)
+        
         loss = M.metric_every_batch(mask, predict, M.dice_loss)
         self.validation_log(batch, predict, mask, loss, batch_idx)
 

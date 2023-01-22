@@ -2,14 +2,17 @@ import torch
 import torch.nn as nn
 
 class feed_forward(nn.Module):
-    def __init__(self, in_ch, out_ch, hidden_layer):
+    def __init__(self, in_ch, out_ch, kernel):
         super().__init__()
-        self.l1 = nn.Linear(in_ch, hidden_layer)
-        self.relu = nn.ReLU()
-        self.l2 = nn.Linear(hidden_layer, out_ch)
-    def forward(self,x) -> torch.Tensor:
-        output = self.l1(x) 
-        output = self.relu(output)
-        output = self.l2(output)
-        return output
+        self.conv = nn.Sequential( 
+            nn.Conv2d(in_ch, out_ch, kernel_size = kernel, stride=1, padding='same'),
+            nn.BatchNorm2d(out_ch),
+            nn.ReLU(inplace=True),
+            nn.Conv2d(out_ch, out_ch, kernel_size = kernel, stride=1, padding='same'),
+            nn.BatchNorm2d(out_ch),
+            nn.ReLU(inplace=True)
+         )
+    def forward(self, x) -> torch.Tensor:
+        x = self.conv(x)
+        return x
 
