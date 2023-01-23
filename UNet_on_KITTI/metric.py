@@ -37,7 +37,15 @@ def dice_loss(mask:torch.Tensor, pred:torch.Tensor) -> torch.Tensor:
     """
     dice loss is 1 - dice score
     """
-    return 1 - m_dice_score(mask, pred)
+    channel_num, _, _ = mask.shape
+    
+    score = torch.zeros(channel_num)
+
+    for i in range(channel_num):
+        curr_score = dice_score_one(mask[i],pred[i])
+        score[i] = curr_score
+        
+    return torch.mean(1-score)
 
 def jaccard_one(mask:torch.Tensor, pred:torch.Tensor, smooth=1e-5) -> torch.Tensor:
     """
