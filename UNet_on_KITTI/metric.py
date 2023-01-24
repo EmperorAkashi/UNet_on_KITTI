@@ -3,6 +3,7 @@ import torch
 import sklearn as sk
 from typing import Optional, Callable
 import torch.nn as nn
+import segmentation_models_pytorch as smp
 
 def dice_score_one(inputs:torch.Tensor, targets:torch.Tensor, smooth=1e-5) -> torch.Tensor:      
     """
@@ -34,19 +35,15 @@ def m_dice_score(mask:torch.Tensor, pred:torch.Tensor) -> torch.Tensor:
         
     return torch.mean(score)
 
-def dice_loss(mask:torch.Tensor, pred:torch.Tensor, smooth=1e-5) -> torch.Tensor:
+def dice_loss(mask:torch.Tensor, pred:torch.Tensor) -> torch.Tensor:
     """
     dice loss is 1 - dice score
     """
     softmax = nn.Softmax(dim=1)
     pred_soft = softmax(pred)
         
-    dims = (1, 2, 3)
-    intersection = torch.sum(pred_soft * mask, dims)
-    cardinality = torch.sum(pred_soft + mask, dims)
-
-    dice_score = 2. * intersection / (cardinality + smooth)
-    return torch.mean(1. - dice_score)
+    dice = smp.losses.DiceLoss(mode="multilabel")
+    return dice(pred_soft,mask)
 
 def jaccard_one(mask:torch.Tensor, pred:torch.Tensor, smooth=1e-5) -> torch.Tensor:
     """
