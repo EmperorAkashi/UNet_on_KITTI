@@ -78,10 +78,12 @@ def m_jaccard(mask:torch.Tensor, pred:torch.Tensor, smooth=1e-5) -> torch.Tensor
 
 def metric_every_batch(mask:torch.Tensor, pred:torch.Tensor, criterion:Callable) -> torch.Tensor:
     n = len(mask)
+    softmax = nn.Softmax(dim=1)
+    pred_soft = softmax(pred)
     curr_batch_loss = torch.zeros(n)
 
     for i in range(n):
-        curr_metric = criterion(mask[i], pred[i])
+        curr_metric = criterion(mask[i], pred_soft[i])
         curr_batch_loss[i] = curr_metric
 
     return torch.mean(curr_batch_loss)
