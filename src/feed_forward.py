@@ -6,10 +6,10 @@ class feed_forward(torch.nn.Module):
     def __init__(self, in_ch, out_ch, kernel):
         super().__init__()
         self.conv = nn.Sequential( 
-            nn.Conv2d(in_ch, out_ch, kernel_size = kernel, stride=1, padding=1),
+            nn.Conv2d(in_ch, out_ch, kernel_size = kernel),
             nn.BatchNorm2d(out_ch),
             nn.ReLU(inplace=True),
-            nn.Conv2d(out_ch, out_ch, kernel_size = kernel, stride=1, padding=1),
+            nn.Conv2d(out_ch, out_ch, kernel_size = kernel),
             nn.BatchNorm2d(out_ch),
             nn.ReLU(inplace=True)
          )
