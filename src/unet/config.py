@@ -6,7 +6,7 @@ import labels as lb
 from model import UNet
 
 @dataclasses.dataclass
-class unet_data_config:
+class UnetDataConfig:
     """configuration of data loading
 
     attr:
@@ -25,7 +25,7 @@ class unet_data_config:
 
 
 @dataclasses.dataclass
-class optim_config:
+class OptimConfig:
     """hyperparams of optimization
 
     attr:
@@ -34,16 +34,16 @@ class optim_config:
     learning_rate: float = 1e-3
 
 @dataclasses.dataclass
-class unet_config:
+class UnetConfig:
     in_channel: int = 3
     num_classes: int = len(lb.labels_to_dict(lb.labels))
     kernel_size: Optional[int] = None
 
 @dataclasses.dataclass
-class unet_train_config:
-    data: unet_data_config = unet_data_config()
-    model_config: unet_config = unet_config()
-    optim: optim_config = optim_config()
+class UnetTrainConfig:
+    data: UnetDataConfig = UnetDataConfig()
+    model_config: UnetConfig = UnetConfig()
+    optim: OptimConfig = OptimConfig()
     batch_size: int = 64
     num_epochs: int = 10
     device: str = 'gpu'

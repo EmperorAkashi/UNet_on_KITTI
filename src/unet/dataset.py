@@ -7,7 +7,7 @@ import torch
 import labels as lb
 
 
-class kitti_dataset(Dataset):
+class KittiDataset(Dataset):
     """
     Dataset to load semantic data from Kitti
     the dir is the top folder of dataset; the read_from_folder 

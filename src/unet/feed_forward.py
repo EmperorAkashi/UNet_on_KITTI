@@ -2,7 +2,7 @@ import torch
 import torch.nn as nn
 
 "construct Double Convolution block for UNet"
-class feed_forward(torch.nn.Module):
+class FeedForward(torch.nn.Module):
     def __init__(self, in_ch, out_ch, kernel):
         super().__init__()
         # self.conv = nn.Sequential( 

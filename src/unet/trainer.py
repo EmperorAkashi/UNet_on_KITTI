@@ -14,23 +14,23 @@ import dataclasses
 import config as cf
 from model import UNet
 import metric as M
-from dataset import kitti_dataset
+from dataset import KittiDataset
 from file_utils import read_from_folder
 import feed_forward as F
 
 
-class unet_trainer(pl.LightningModule):
-    hparams: cf.unet_train_config 
+class UnetTrainer(pl.LightningModule):
+    hparams: cf.UnetTrainConfig 
     #constant intitialized for each instance
     #pl module has save_haparams attr, 
     # enable Lightning to store all the provided arguments 
     # under the self.hparams attribute
 
-    def __init__(self, config: cf.unet_train_config):
+    def __init__(self, config: cf.UnetTrainConfig):
         super().__init__()
         self.save_hyperparameters(config)
         self.unet = UNet(config.model_config.in_channel, config.model_config.num_classes)
-        self.fcn = F.feed_forward(config.model_config.in_channel, config.model_config.num_classes, 
+        self.fcn = F.FeedForward(config.model_config.in_channel, config.model_config.num_classes, 
                                 config.model_config.kernel_size)
         self.config = config
     def forward(self, x):
@@ -95,8 +95,8 @@ class unet_trainer(pl.LightningModule):
         return optim
 
 
-class unet_data_module(pl.LightningDataModule):
-    def __init__(self, config: cf.unet_data_config, batch_size: int, debug: bool) -> None:
+class UnetDataModule(pl.LightningDataModule):
+    def __init__(self, config: cf.UnetDataConfig, batch_size: int, debug: bool) -> None:
         super().__init__()
         self.config = config
         self.batch_size = batch_size
@@ -104,7 +104,7 @@ class unet_data_module(pl.LightningDataModule):
                                       alb.HorizontalFlip(p=0.5)])
         self.norm = alb.Normalize() #use default mean and std
         self.debug = debug
-        self.ds = kitti_dataset(hydra.utils.to_absolute_path(self.config.file_path), 
+        self.ds = KittiDataset(hydra.utils.to_absolute_path(self.config.file_path), 
                                 self.transform, self.norm, self.debug)
         self.ds_train = None
         self.ds_val = None
@@ -133,7 +133,7 @@ class unet_data_module(pl.LightningDataModule):
 #config_name should consistent with the one in cs.store()
 #config store turns dataclass into dataframes
 @hydra.main(config_path=None, config_name='train', version_base='1.1' ) 
-def main(config: cf.unet_train_config):
+def main(config: cf.UnetTrainConfig):
     logger = logging.getLogger(__name__)
     trainer = pl.Trainer(
         accelerator=config.device, 
@@ -142,8 +142,8 @@ def main(config: cf.unet_train_config):
         max_epochs=config.num_epochs)
     
     data_config = config.data
-    dm = unet_data_module(data_config, config.batch_size, config.debug)
-    model = unet_trainer(config)
+    dm = UnetDataModule(data_config, config.batch_size, config.debug)
+    model = UnetTrainer(config)
 
     trainer.fit(model,dm)
 
@@ -156,5 +156,5 @@ def main(config: cf.unet_train_config):
 if __name__ == '__main__':
     from hydra.core.config_store import ConfigStore
     cs = ConfigStore()
-    cs.store('train', node=cf.unet_train_config)
+    cs.store('train', node=cf.UnetTrainConfig)
     main()
