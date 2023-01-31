@@ -22,7 +22,7 @@ import feed_forward as F
 class UnetTrainer(pl.LightningModule):
     hparams: cf.UnetTrainConfig 
     #constant intitialized for each instance
-    #pl module has save_haparams attr, 
+    #pl module has save_hparams attr, 
     # enable Lightning to store all the provided arguments 
     # under the self.hparams attribute
 
