@@ -2,9 +2,9 @@ import numpy as np
 from torch.utils.data import Dataset, DataLoader, sampler
 import os
 import cv2 as cv
-from file_utils import read_from_folder
+from unet.file_utils import read_from_folder
 import torch
-import labels as lb
+import unet.labels as lb
 
 
 class KittiDataset(Dataset):
