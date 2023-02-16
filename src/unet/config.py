@@ -1,9 +1,9 @@
 import dataclasses
 from typing import Optional, Tuple, List
 import omegaconf
-import labels as lb
+import unet.labels as lb
 
-from model import UNet
+from unet.model import UNet
 
 @dataclasses.dataclass
 class UnetDataConfig:

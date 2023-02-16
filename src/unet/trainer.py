@@ -12,12 +12,12 @@ from torchvision import transforms
 import albumentations as alb
 import pytorch_lightning as pl
 import dataclasses
-import config as cf
-from model import UNet
-import metric as M
-from dataset import KittiDataset
-from file_utils import read_from_folder
-import feed_forward as F
+import unet.config as cf
+from unet.model import UNet
+import unet.metric as M
+from unet.dataset import KittiDataset
+from unet.file_utils import read_from_folder
+import unet.feed_forward as F
 
 
 class UnetTrainer(pl.LightningModule):
@@ -116,7 +116,7 @@ class UnetDataModule(pl.LightningDataModule):
         self.ds_train = None
         self.ds_val = None
 
-    def setup(self, stage: str) -> None:
+    def setup(self, stage: str = None) -> None:
         # Define steps that should be done on 
         # every GPU, like splitting data, applying
         # transforms etc.
