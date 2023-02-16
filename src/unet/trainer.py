@@ -1,6 +1,7 @@
 import numpy as np
 import hydra
 import logging
+import omegaconf
 
 import torch
 import torch.nn as nn
@@ -28,6 +29,12 @@ class UnetTrainer(pl.LightningModule):
 
     def __init__(self, config: cf.UnetTrainConfig):
         super().__init__()
+        #The LightningModule automatically save all the hyperparameters 
+        #passed to init simply by calling self.save_hyperparameters()
+        #with config, we need to structured it before call save_hyperparameters()
+        if not omegaconf.OmegaConf.is_config(config):
+            config = omegaconf.OmegaConf.structured(config)
+            
         self.save_hyperparameters(config)
         self.unet = UNet(config.model_config.in_channel, config.model_config.num_classes)
         self.fcn = F.FeedForward(config.model_config.in_channel, config.model_config.num_classes, 
