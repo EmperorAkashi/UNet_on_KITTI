@@ -22,16 +22,16 @@ import unet.feed_forward as F
 
 class UnetTrainer(pl.LightningModule):
     hparams: cf.UnetTrainConfig 
-    #constant intitialized for each instance
-    #pl module has save_hparams attr, 
+    # constant intitialized for each instance
+    # pl module has save_hparams attr, 
     # enable Lightning to store all the provided arguments 
     # under the self.hparams attribute
 
     def __init__(self, config: cf.UnetTrainConfig):
         super().__init__()
-        #The LightningModule automatically save all the hyperparameters 
-        #passed to init simply by calling self.save_hyperparameters()
-        #with config, we need to structured it before call save_hyperparameters()
+        # The LightningModule automatically save all the hyperparameters 
+        # passed to init simply by calling self.save_hyperparameters()
+        # with config, we need to structured it before call save_hyperparameters()
         if not omegaconf.OmegaConf.is_config(config):
             config = omegaconf.OmegaConf.structured(config)
             
@@ -46,7 +46,7 @@ class UnetTrainer(pl.LightningModule):
         return self.unet(x)
 
     def training_log(self, batch, pred:torch.Tensor, mask:torch.Tensor, loss: float, batch_idx: int):
-        #Lightning offers automatic log functionalities for logging scalars, 
+        # Lightning offers automatic log functionalities for logging scalars, 
         # or manual logging for anything else
         jaccard = M.metric_every_batch(mask, pred, M.m_jaccard)
         f1_score = M.metric_every_batch(mask, pred, M.m_dice_score)
@@ -65,8 +65,8 @@ class UnetTrainer(pl.LightningModule):
         self.log('train/mIoU', jaccard)
 
     def training_step(self, batch, batch_idx: int):
-        image, mask = batch #loader create an iterator
-        predict = self(image) #self call forward by default
+        image, mask = batch # loader create an iterator
+        predict = self(image) # self call forward by default
        
         loss = M.dice_loss(predict,mask)
         self.training_log(batch, predict, mask, loss, batch_idx)
@@ -137,8 +137,8 @@ class UnetDataModule(pl.LightningDataModule):
     def val_dataloader(self):
         return torch.utils.data.DataLoader(self.ds_val, self.batch_size, shuffle=False, num_workers=self.config.num_data_workers)
 
-#config_name should consistent with the one in cs.store()
-#config store turns dataclass into dataframes
+# config_name should consistent with the one in cs.store()
+# config store turns dataclass into dataframes
 @hydra.main(config_path=None, config_name='train', version_base='1.1' ) 
 def main(config: cf.UnetTrainConfig):
     logger = logging.getLogger(__name__)

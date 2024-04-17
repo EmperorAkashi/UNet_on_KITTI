@@ -20,7 +20,7 @@ def read_from_folder(path: str)->dict:
     :param path: path of the dataset/dataset split to use
     :return: a dictionary with all files for each key, sorted alphabetically by filename
     """
-    sub_folder = list_subdir(path) #path in dataconfig should be the top folder
+    sub_folder = list_subdir(path) # path in dataconfig should be the top folder
     semantic_dataframe = collections.defaultdict()
 
     for f in sub_folder:

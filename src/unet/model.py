@@ -50,7 +50,7 @@ class Up(torch.nn.Module):
 class OutLayer(torch.nn.Module):
     def __init__(self, in_ch, num_class):
         super().__init__()
-        self.conv = nn.Conv2d(in_ch, num_class, 1) #final layer by 1x1 conv
+        self.conv = nn.Conv2d(in_ch, num_class, 1) # final layer by 1x1 conv
        # self.softmax = nn.Softmax(dim = -1) #elementwise calculation of softmax, each layer (class)
         
     def forward(self, x) -> torch.Tensor:
@@ -76,7 +76,7 @@ class UNet(torch.nn.Module):
         self.up2 = Up(512, 128)
         self.up3 = Up(256, 64)
         self.up4 = Up(128, 64)
-        self.outc = OutLayer(64, num_classes)  #out layer w/ different classes, each channel w/ binary label
+        self.outc = OutLayer(64, num_classes)  # out layer w/ different classes, each channel w/ binary label
     def forward(self, x) -> torch.Tensor:
         x1 = self.inc(x)
         x1 = self.attn1(x1)

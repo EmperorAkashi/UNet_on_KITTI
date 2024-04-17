@@ -52,8 +52,8 @@ def jaccard_one(mask:torch.Tensor, pred:torch.Tensor, smooth=1e-5) -> torch.Tens
     inputs = pred.view(-1)
     targets = mask.view(-1)
     
-    #intersection is equivalent to True Positive count
-    #union is the mutually inclusive area of all labels & predictions 
+    # intersection is equivalent to True Positive count
+    # union is the mutually inclusive area of all labels & predictions 
     intersection = (inputs * targets).sum()
     total = (inputs + targets).sum()
     union = total - intersection 

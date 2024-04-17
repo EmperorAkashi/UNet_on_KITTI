@@ -15,7 +15,7 @@ class KittiDataset(Dataset):
     """
 
     def __init__(self, dir, transform = None, norm = None, debug = None):
-        self.transform = transform #transforms will be specified in trainer
+        self.transform = transform # transforms will be specified in trainer
         self.norm = norm
         self.dir = dir
         self.df =  read_from_folder(dir)
@@ -33,9 +33,9 @@ class KittiDataset(Dataset):
         augment = self.transform(image=image_, mask=segment) #transform used here are from albulmentations
         img_aug = augment['image']
         msk_aug = augment['mask']
-        #normalize image&mask separately
+        # normalize image&mask separately
         norm_img = self.norm(image=img_aug)
         img_norm = norm_img['image']
         
         return torch.Tensor(img_norm).permute(2,0,1), torch.Tensor(msk_aug).permute(2,0,1)
-        #totensor and permutation maybe specified in transforms?
+        # totensor and permutation maybe specified in transforms?
