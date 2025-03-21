@@ -6,12 +6,13 @@ import omegaconf
 import torch
 import torch.nn as nn
 import torch.utils.data
-import torch.utils.tensorboard 
+import torch.utils.tensorboard
+import torch.distributed as dist
+from torch.nn.parallel import DistributedDataParallel
 
 from torchvision import transforms
 import albumentations as alb
 import pytorch_lightning as pl
-import dataclasses
 import unet.config as cf
 from unet.model import UNet
 import unet.metric as M
@@ -109,7 +110,7 @@ class UnetDataModule(pl.LightningDataModule):
         self.batch_size = batch_size
         self.transform = alb.Compose([alb.RandomCrop(width=self.config.crop,height=self.config.crop),  
                                       alb.HorizontalFlip(p=0.5)])
-        self.norm = alb.Normalize() #use default mean and std
+        self.norm = alb.Normalize() # use default mean and std
         self.debug = debug
         self.ds = KittiDataset(hydra.utils.to_absolute_path(self.config.file_path), 
                                 self.transform, self.norm, self.debug)
@@ -142,11 +143,19 @@ class UnetDataModule(pl.LightningDataModule):
 @hydra.main(config_path=None, config_name='train', version_base='1.1' ) 
 def main(config: cf.UnetTrainConfig):
     logger = logging.getLogger(__name__)
-    trainer = pl.Trainer(
+    if config.num_gpus == 1:
+        trainer = pl.Trainer(
         accelerator=config.device, 
         devices=config.num_gpus,
         log_every_n_steps=config.log_every,
         max_epochs=config.num_epochs)
+    else:
+        trainer = pl.Trainer(
+            accelerator=config.device, 
+            devices=config.num_gpus,
+            strategy='ddp',
+            log_every_n_steps=config.log_every,
+            max_epochs=config.num_epochs)
     
     data_config = config.data
     dm = UnetDataModule(data_config, config.batch_size, config.debug)
