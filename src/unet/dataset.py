@@ -30,7 +30,7 @@ class KittiDataset(Dataset):
         image_ = cv.imread(img_path)
         segment = cv.imread(seg_path)
         segment = lb.rgb_to_onehot(segment)
-        augment = self.transform(image=image_, mask=segment) #transform used here are from albulmentations
+        augment = self.transform(image=image_, mask=segment) # transform used here are from albulmentations
         img_aug = augment['image']
         msk_aug = augment['mask']
         # normalize image&mask separately

@@ -43,7 +43,7 @@ def dice_loss(mask:torch.Tensor, pred:torch.Tensor) -> torch.Tensor:
     pred_soft = softmax(pred)
         
     dice = smp.losses.DiceLoss(mode="multilabel")
-    return dice(pred_soft,mask)
+    return dice(pred_soft, mask)
 
 def jaccard_one(mask:torch.Tensor, pred:torch.Tensor, smooth=1e-5) -> torch.Tensor:
     """
